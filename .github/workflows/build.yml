@@ -24,16 +24,26 @@ jobs:
 
       # Optional: sign the release bundle with the real upload key.
       # Set repo secrets ANDROID_KEYSTORE_BASE64 (+ KEYSTORE_PASSWORD,
-      # KEY_ALIAS, KEY_PASSWORD). When absent, the release bundle falls
-      # back to debug signing so the build never fails.
+      # KEY_ALIAS, KEY_PASSWORD). When absent, the step is a no-op and the
+      # release bundle falls back to debug signing so the build never fails.
       - name: Decode keystore (optional)
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > /tmp/eyebrowser.keystore
-          echo "KEYSTORE_PATH=/tmp/eyebrowser.keystore" >> $GITHUB_ENV
-          echo "KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
-          echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> $GITHUB_ENV
-          echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_ENV
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > /tmp/eyebrowser.keystore
+            {
+              echo "KEYSTORE_PATH=/tmp/eyebrowser.keystore"
+              echo "KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD"
+              echo "KEY_ALIAS=$KEY_ALIAS"
+              echo "KEY_PASSWORD=$KEY_PASSWORD"
+            } >> "$GITHUB_ENV"
+          else
+            echo "No keystore secret — release will use debug signing."
+          fi
 
       - name: Build debug APK
         run: gradle :app:assembleDebug

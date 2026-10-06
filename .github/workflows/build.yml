@@ -17,10 +17,15 @@ jobs:
           java-version: '17'
 
       # GitHub runners ship an Android SDK; install the packages this build needs.
+      # (Licenses are pre-accepted via license files: `yes | sdkmanager` breaks
+      # under the runner's `pipefail` shell option.)
       - name: Install Android SDK packages
         run: |
-          yes | sdkmanager --licenses > /dev/null
-          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          mkdir -p "$ANDROID_HOME/licenses"
+          printf '\n8933bad161af4178b1185d1a37fbf41ea5269c55d' > "$ANDROID_HOME/licenses/android-sdk-license"
+          printf '\n84831b9409646a918e30573bab4c9c91346d71' > "$ANDROID_HOME/licenses/android-sdk-preview-license"
+          "$SDKMANAGER" "platforms;android-35" "build-tools;35.0.0"
 
       - uses: gradle/actions/setup-gradle@v3
         with:

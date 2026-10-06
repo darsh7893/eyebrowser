@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.EyeBrowser" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/eye_accent</item>
+        <item name="colorPrimaryDark">@color/eye_navy</item>
+        <item name="colorAccent">@color/eye_accent</item>
+        <item name="android:windowBackground">@color/eye_navy</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:textColorPrimary">@color/eye_text</item>
+        <item name="android:textColorSecondary">@color/eye_text_dim</item>
+    </style>
+
+    <!-- Rounded, dark dialog used for every popup so nothing looks stock. -->
+    <style name="EyeDialog" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/dialog_bg</item>
+        <item name="colorAccent">@color/eye_accent</item>
+        <item name="android:textColorPrimary">@color/eye_text</item>
+        <item name="android:textColorSecondary">@color/eye_text_dim</item>
+        <item name="android:windowMinWidthMajor">60%</item>
+        <item name="android:windowMinWidthMinor">80%</item>
+    </style>
+</resources>
